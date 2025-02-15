@@ -1,0 +1,8 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+rules:
+  - pattern: "kafka.connect<type=source-task-metrics, connector=(.*), task=(.*)><>source-record-write-rate"
+    name: "kafka_connect_source_task_metrics_source_record_write_rate"
+    labels:
+      connector: "$1"
+      task: "$2"

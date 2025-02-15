@@ -1,0 +1,90 @@
+# Kafka Performance Test Project с Автоматизированными Экспериментами и Логированием
+
+Этот проект демонстрирует работу следующих компонентов:
+- **Kafka** (кластер из трёх брокеров)
+- **PostgreSQL** (с включённым WAL для репликации)
+- **Kafka Connect** со стандартным JDBC Source Connector от Confluent, с переопределением параметров продюсера
+- Экспорт JMX‑метрик из Kafka Connect через JMX Prometheus Javaagent
+- **Prometheus** для сбора метрик
+- **Grafana** с provisioning‑ом для автоматической загрузки дашбордов
+- **Experiment-runner** — модуль для автоматизированного (или ручного) проведения экспериментов, при которых варьируются параметры продюсера (batch.size, linger.ms, compression.type, buffer.memory). Результаты (скорость записи Source Record Write Rate) записываются в CSV‑лог.
+
+## Структура проекта
+
+```plaintext
+Kafka-Performance-Test-Project/
+├── docker-compose.yml               # Запускает Kafka, PostgreSQL, Kafka Connect, Prometheus, Grafana, experiment-runner
+├── jdbc-source-connector.json       # Конфигурация стандартного JDBC Source Connector
+├── prometheus/
+│   └── prometheus.yml               # Конфигурация Prometheus
+├── jmx_exporter/
+│   ├── jmx_prometheus_javaagent-0.15.0.jar  # JMX Exporter агент (скачайте и поместите сюда)
+│   └── kafka_connect.yml            # Конфигурация JMX Exporter для Kafka Connect
+├── grafana/
+│   ├── Dockerfile                   # Dockerfile для Grafana с provisioning
+│   ├── provisioning/
+│   │   └── dashboards/
+│   │       └── dashboard.yml        # Provisioning для дашбордов
+│   └── dashboards/
+│       └── kafka_connect_dashboard.json  # Дашборд для метрики Source Record Write Rate
+├── experiment_runner/
+│   ├── Dockerfile                   # Dockerfile для контейнера с экспериментальным модулем
+│   └── experiment_runner.py         # Скрипт, выполняющий эксперименты и записывающий результаты в CSV‑лог
+└── README.md                        # Описание проекта и результаты экспериментов
+
+
+## Инструкция по запуску
+
+1. **Подготовка окружения:**
+   - Установите Docker и Docker Compose.
+   - Скачайте JMX Exporter агент по ссылке:  
+     [jmx_prometheus_javaagent-0.15.0.jar](https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.15.0/jmx_prometheus_javaagent-0.15.0.jar)  
+     и поместите файл в папку `jmx_exporter`.
+
+2. **Запуск всех сервисов:**
+   ```bash
+   docker-compose up -d
+
+   ## Описание экспериментов и результаты
+
+Экспериментальный модуль варьирует параметры продюсера Kafka Connect:
+
+- `batch.size` — размер пакета сообщений.
+- `linger.ms` — задержка перед отправкой пакета.
+- `compression.type` — тип сжатия (none или snappy).
+- `buffer.memory` — объем буфера памяти.
+
+После каждого эксперимента измеряется метрика **Source Record Write Rate (оп/сек)**, а результаты записываются в CSV‑лог.
+
+### Результаты экспериментов
+
+| Номер эксперимента | batch.size | linger.ms | сжатие.тип | буфер.память | Скорость записи исходной записи (коп/сек) |
+|--------------------|------------|-----------|------------|--------------|-------------------------------------------|
+| 5                  | 500        | 3000      | none       | 33554432     | 117.49                                    |
+| 6                  | 500        | 3000      | none       | 134217728    | 687.48                                    |
+| 7                  | 500        | 3000      | snappy     | 33554432     | 640.10                                    |
+| 8                  | 500        | 3000      | snappy     | 134217728    | 642.73                                    |
+| 9                  | 5000       | 0         | none       | 33554432     | 1551.23                                   |
+| 10                 | 5000       | 0         | none       | 134217728    | 1613.61                                   |
+| 11                 | 5000       | 0         | snappy     | 33554432     | 1575.46                                   |
+| 12                 | 5000       | 0         | snappy     | 134217728    | 1581.94                                   |
+| 13                 | 5000       | 3000      | none       | 33554432     | 1585.29                                   |
+| 14                 | 5000       | 3000      | none       | 134217728    | 1598.91                                   |
+| 15                 | 5000       | 3000      | snappy     | 33554432     | 1602.89                                   |
+| 16                 | 5000       | 3000      | snappy     | 134217728    | 1602.68                                   |
+
+> Значения скорости записи округлены до двух знаков после запятой.
+
+### Анализ и выводы
+
+- **Batch Size и Buffer Memory:**  
+  При небольшом `batch.size` (500) и низком объёме буфера (33 МБ) скорость записи составляет всего около 117 оп/сек. Увеличение буфера до 134 МБ при том же `batch.size` значительно повышает производительность.
+
+- **Увеличение Batch Size:**  
+  При `batch.size = 5000` скорость записи возрастает до 1550–1610 оп/сек, что указывает на эффективность увеличения размера батча независимо от типа сжатия.
+
+- **Linger Time:**  
+  При `linger.ms = 3000` с большим `batch.size` показатели остаются примерно на уровне 1585–1603 оп/сек, что свидетельствует о минимальном влиянии задержки в данном диапазоне.
+
+- **Тип сжатия:**  
+  Разница между использованием `none` и `snappy` несущественна при оптимальных значениях `batch.size` и `buffer.memory`.

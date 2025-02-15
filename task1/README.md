@@ -2,11 +2,10 @@
 
 Этот проект демонстрирует работу следующих компонентов:
 - **Kafka** (кластер из трёх брокеров)
-- **PostgreSQL** (с включённым WAL для репликации)
+- **PostgreSQL** 
 - **Kafka Connect** со стандартным JDBC Source Connector от Confluent, с переопределением параметров продюсера
 - Экспорт JMX‑метрик из Kafka Connect через JMX Prometheus Javaagent
 - **Prometheus** для сбора метрик
-- **Grafana** с provisioning‑ом для автоматической загрузки дашбордов
 - **Experiment-runner** — модуль для автоматизированного (или ручного) проведения экспериментов, при которых варьируются параметры продюсера (`batch.size`, `linger.ms`, `compression.type`, `buffer.memory`). Результаты (скорость записи Source Record Write Rate) записываются в CSV‑лог.
 
 ## Структура проекта
@@ -21,7 +20,6 @@ Kafka-Performance-Test-Project/
 │   ├── Dockerfile                   # Dockerfile для контейнера с экспериментальным модулем
 │   └── experiment_runner.py         # Скрипт, выполняющий эксперименты и записывающий результаты в CSV‑лог
 │
-├── grafana/
 │
 ├── kafka-connect/
 │   ├── Dockerfile                   # Dockerfile для Kafka Connect

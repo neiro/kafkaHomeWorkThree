@@ -1,0 +1,126 @@
+Структура папок тома SuperFast
+Серийный номер тома: 92D2-1C6B
+D:.
+|   docker-compose.yaml
+|   README.md
+|   structure.txt
+|   
++---experiment_runner
+|       Dockerfile
+|       experiment_runner.py
+|       
++---grafana
+|   |   Dockerfile
+|   |   
+|   +---dashboards
+|   |       kafka_connect_dashboard.json
+|   |       
+|   \---provisioning
+|       \---dashboards
+|               dashboard.yml
+|               
++---kafka-connect
+|   |   Dockerfile
+|   |   kafka-connect.yml
+|   |   
+|   +---connector-init
+|   |   |   init-connector.sh
+|   |   |   
+|   |   \---config
+|   |           jdbc-source-connector.json
+|   |           
+|   \---plugins
+|       |   confluentinc-kafka-connect-jdbc-10.8.0.zip
+|       |   connect-api-3.9.0.jar
+|       |   connect-file-3.9.0.jar
+|       |   debezium-api-3.0.6.Final.jar
+|       |   debezium-connector-postgres-3.0.6.Final-plugin.tar.gz
+|       |   debezium-connector-postgres-3.0.6.Final.jar
+|       |   debezium-connector-postgresql.tar.gz
+|       |   debezium-connector-sqlserver-3.0.6.Final-plugin.tar.gz
+|       |   debezium-core-3.0.6.Final.jar
+|       |   jmx_prometheus_javaagent-0.15.0.jar
+|       |   postgresql-42.6.1.jar
+|       |   protobuf-java-3.25.5.jar
+|       |   
+|       +---confluentinc-kafka-connect-jdbc-10.8.0
+|       |   |   manifest.json
+|       |   |   
+|       |   +---assets
+|       |   |       confluent.png
+|       |   |       jdbc.jpg
+|       |   |       
+|       |   +---doc
+|       |   |   |   LICENSE
+|       |   |   |   licenses.html
+|       |   |   |   NOTICE
+|       |   |   |   README.md
+|       |   |   |   version.txt
+|       |   |   |   
+|       |   |   \---licenses
+|       |   |           LICENSE-kafka-connect-jdbc-10.0.0-SNAPSHOT.txt
+|       |   |           LICENSE-mssql-jdbc-8.4.1.jre8.txt
+|       |   |           LICENSE-ojdbc8-19.7.0.0.txt
+|       |   |           LICENSE-ons-19.7.0.0.txt
+|       |   |           LICENSE-oraclepki-19.7.0.0.txt
+|       |   |           LICENSE-orai18n-19.7.0.0.txt
+|       |   |           LICENSE-osdt_cert-19.7.0.0.txt
+|       |   |           LICENSE-osdt_core-19.7.0.0.txt
+|       |   |           LICENSE-postgresql-42.2.10.txt
+|       |   |           LICENSE-simplefan-19.7.0.0.txt
+|       |   |           LICENSE-sqlite-jdbc-3.25.2.txt
+|       |   |           LICENSE-ucp-19.7.0.0.txt
+|       |   |           LICENSE-xdb-19.7.0.0.txt
+|       |   |           LICENSE-xmlparserv2-19.7.0.0.txt
+|       |   |           
+|       |   +---etc
+|       |   |       sink-quickstart-sqlite.properties
+|       |   |       source-quickstart-sqlite.properties
+|       |   |       
+|       |   \---lib
+|       |           checker-qual-3.5.0.jar
+|       |           common-utils-7.0.12.jar
+|       |           jtds-1.3.1.jar
+|       |           kafka-connect-jdbc-10.8.0.jar
+|       |           mssql-jdbc-8.4.1.jre8.jar
+|       |           ojdbc8-19.7.0.0.jar
+|       |           ons-19.7.0.0.jar
+|       |           oraclepki-19.7.0.0.jar
+|       |           orai18n-19.7.0.0.jar
+|       |           osdt_cert-19.7.0.0.jar
+|       |           osdt_core-19.7.0.0.jar
+|       |           postgresql-42.4.4.jar
+|       |           simplefan-19.7.0.0.jar
+|       |           slf4j-api-1.7.36.jar
+|       |           sqlite-jdbc-3.41.2.2.jar
+|       |           ucp-19.7.0.0.jar
+|       |           xdb-19.7.0.0.jar
+|       |           xmlparserv2-19.7.0.0.jar
+|       |           
+|       +---debezium-connector-postgres
+|       |       CHANGELOG.md
+|       |       CONTRIBUTE.md
+|       |       COPYRIGHT.txt
+|       |       debezium-api-3.0.6.Final.jar
+|       |       debezium-connector-postgres-3.0.6.Final.jar
+|       |       debezium-core-3.0.6.Final.jar
+|       |       LICENSE-3rd-PARTIES.txt
+|       |       LICENSE.txt
+|       |       postgresql-42.6.1.jar
+|       |       protobuf-java-3.25.5.jar
+|       |       README.md
+|       |       README_JA.md
+|       |       README_KO.md
+|       |       README_ZH.md
+|       |       
+|       \---kafka_connect.yml
++---logs
+|       experiment_configurations.csv
+|       experiment_results.csv
+|       
++---postgres
+|       init.sql
+|       
+\---prometheus
+        prometheus.yml
+        

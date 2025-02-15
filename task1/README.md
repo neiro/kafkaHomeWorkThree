@@ -14,75 +14,88 @@
 ```plaintext
 Kafka-Performance-Test-Project/
 ├── docker-compose.yml               # Запускает Kafka, PostgreSQL, Kafka Connect, Prometheus, Grafana, experiment-runner
-├── jdbc-source-connector.json       # Конфигурация стандартного JDBC Source Connector
-├── prometheus/
-│   └── prometheus.yml               # Конфигурация Prometheus
-├── jmx_exporter/
-│   ├── jmx_prometheus_javaagent-0.15.0.jar  # JMX Exporter агент (скачайте и поместите сюда)
-│   └── kafka_connect.yml            # Конфигурация JMX Exporter для Kafka Connect
-├── grafana/
-│   ├── Dockerfile                   # Dockerfile для Grafana с provisioning
-│   ├── provisioning/
-│   │   └── dashboards/
-│   │       └── dashboard.yml        # Provisioning для дашбордов
-│   └── dashboards/
-│       └── kafka_connect_dashboard.json  # Дашборд для метрики Source Record Write Rate
+├── README.md                        # Описание проекта и результаты экспериментов
+├── structure.txt                    # Файл со структурой папок
+│
 ├── experiment_runner/
 │   ├── Dockerfile                   # Dockerfile для контейнера с экспериментальным модулем
 │   └── experiment_runner.py         # Скрипт, выполняющий эксперименты и записывающий результаты в CSV‑лог
-└── README.md                        # Описание проекта и результаты экспериментов
+│
+├── grafana/
+│
+├── kafka-connect/
+│   ├── Dockerfile                   # Dockerfile для Kafka Connect
+│   ├── kafka-connect.yml             # Конфигурация Kafka Connect
+│   ├── connector-init/
+│   │   ├── init-connector.sh         # Скрипт инициализации коннектора
+│   │   ├── config/
+│   │   │   └── jdbc-source-connector.json  # Конфигурация JDBC Source Connector
+│   ├── plugins/
+│
+├── logs/
+│   ├── experiment_configurations.csv  # Лог конфигураций экспериментов
+│   ├── experiment_results.csv         # Лог результатов экспериментов
+│
+├── postgres/
+│   └── init.sql                        # SQL-скрипт инициализации базы данных
+│
+└── prometheus/
+    └── prometheus.yml                   # Конфигурация Prometheus
 ```
 
-##Инструкция по запуску
-##№Подготовка окружения:
+## Инструкция по запуску
+
+### Подготовка окружения
 
 Установите Docker и Docker Compose.
 
+### Запуск всех сервисов
 
-Запуск всех сервисов:
-```plaintext
-docker-compose up -d
-```plaintext
+```bash
+docker-compose up -d --build
+```
 
-##ИОписание экспериментов и результаты
+## Описание экспериментов и результаты
+
 Экспериментальный модуль варьирует параметры продюсера Kafka Connect:
 
-- **batch.size**  размер пакета сообщений.
-
-- **linger.ms**  задержка перед отправкой пакета.
-
-- **compression.type**  тип сжатия (none или snappy).
-
-- **buffer.memory**  объем буфера памяти.
+- **batch.size** — размер пакета сообщений.
+- **linger.ms** — задержка перед отправкой пакета.
+- **compression.type** — тип сжатия (none или snappy).
+- **buffer.memory** — объём буфера памяти.
 
 После каждого эксперимента измеряется метрика Source Record Write Rate (оп/сек), а результаты записываются в CSV‑лог.
 
-##Результаты экспериментов
-Номер эксперимента	batch.size	linger.ms	сжатие.тип	буфер.память	Скорость записи исходной записи (коп/сек)
-5	500	3000	none	33554432	117.49
-6	500	3000	none	134217728	687.48
-7	500	3000	snappy	33554432	640.10
-8	500	3000	snappy	134217728	642.73
-9	5000	0	none	33554432	1551.23
-10	5000	0	none	134217728	1613.61
-11	5000	0	snappy	33554432	1575.46
-12	5000	0	snappy	134217728	1581.94
-13	5000	3000	none	33554432	1585.29
-14	5000	3000	none	134217728	1598.91
-15	5000	3000	snappy	33554432	1602.89
-16	5000	3000	snappy	134217728	1602.68
+## Результаты экспериментов
+
+| Номер эксперимента | batch.size | linger.ms | compression.type | buffer.memory | Скорость записи (оп/сек) |
+|--------------------|------------|------------|------------------|--------------|-------------------------|
+| 5  | 500  | 3000 | none  | 33554432  | 117.49  |
+| 6  | 500  | 3000 | none  | 134217728 | 687.48  |
+| 7  | 500  | 3000 | snappy | 33554432  | 640.10  |
+| 8  | 500  | 3000 | snappy | 134217728 | 642.73  |
+| 9  | 5000 | 0    | none   | 33554432  | 1551.23 |
+| 10 | 5000 | 0    | none   | 134217728 | 1613.61 |
+| 11 | 5000 | 0    | snappy | 33554432  | 1575.46 |
+| 12 | 5000 | 0    | snappy | 134217728 | 1581.94 |
+| 13 | 5000 | 3000 | none   | 33554432  | 1585.29 |
+| 14 | 5000 | 3000 | none   | 134217728 | 1598.91 |
+| 15 | 5000 | 3000 | snappy | 33554432  | 1602.89 |
+| 16 | 5000 | 3000 | snappy | 134217728 | 1602.68 |
+
 Значения скорости записи округлены до двух знаков после запятой.
 
-##Анализ и выводы
-Batch Size и Buffer Memory:
+## Анализ и выводы
+
+### Batch Size и Buffer Memory
 При небольшом batch.size (500) и низком объёме буфера (33 МБ) скорость записи составляет всего около 117 оп/сек. Увеличение буфера до 134 МБ при том же batch.size значительно повышает производительность.
 
-Увеличение Batch Size:
+### Увеличение Batch Size
 При batch.size = 5000 скорость записи возрастает до 1550–1610 оп/сек, что указывает на эффективность увеличения размера батча независимо от типа сжатия.
 
-Linger Time:
+### Linger Time
 При linger.ms = 3000 с большим batch.size показатели остаются примерно на уровне 1585–1603 оп/сек, что свидетельствует о минимальном влиянии задержки в данном диапазоне.
 
-Тип сжатия:
+### Тип сжатия
 Разница между использованием none и snappy несущественна при оптимальных значениях batch.size и buffer.memory.
 

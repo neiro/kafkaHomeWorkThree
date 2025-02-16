@@ -27,6 +27,15 @@
 - Реализован на Java (код в `kafka-connect`/`src/main`).  
 - Слушает JSON-метрики из Kafka и раскрывает их на HTTP-эндпоинте `/metrics` в формате Prometheus.
 
+***Коннектор настраивается с помощью JSON-конфигурации, содержащей основные параметры:***
+- "connector.class": класс коннектора, например, "org.example.PrometheusSinkConnector".
+- "tasks.max": максимальное количество задач (обычно 1).
+- "topics": топики Kafka для чтения данных (например, "test-topic").
+- "prometheus.listener.url" и "prometheus.listener.port": адрес и порт HTTP-эндпоинта для экспонирования метрик (например, 8090).
+
+***Обработка данных:***
+- коннектор читает JSON-сообщения из Kafka, парсит ключевые метрики, преобразует их в Prometheus-формат и делает доступными на /metrics.
+
 **Prometheus**  
 - Мониторинг метрик:  
   - Kafka Connect (через JMX-агент).  
@@ -54,7 +63,7 @@
 2. Клонируйте репозиторий и перейдите в папку проекта:
    ```bash
    git clone https://github.com/neiro/kafkaHomeWorkThree
-   cd kafkaHomeWorkThree
+   cd kafkaHomeWorkThree/task2
    ```
 
 3. Запустите все сервисы:

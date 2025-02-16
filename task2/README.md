@@ -28,10 +28,10 @@
 - Слушает JSON-метрики из Kafka и раскрывает их на HTTP-эндпоинте `/metrics` в формате Prometheus.
 
 ***Коннектор настраивается с помощью JSON-конфигурации, содержащей основные параметры:***
-- "connector.class": класс коннектора, например, "org.example.PrometheusSinkConnector".
-- "tasks.max": максимальное количество задач (обычно 1).
+- "connector.class": класс коннектора, у нас это "org.example.PrometheusSinkConnector".
+- "tasks.max": максимальное количество задач (выставлена 1).
 - "topics": топики Kafka для чтения данных (например, "test-topic").
-- "prometheus.listener.url" и "prometheus.listener.port": адрес и порт HTTP-эндпоинта для экспонирования метрик (например, 8090).
+- "prometheus.listener.url" и "prometheus.listener.port": адрес и порт HTTP-эндпоинта для экспонирования метрик (мы будем слушать 8090).
 
 ***Обработка данных:***
 - коннектор читает JSON-сообщения из Kafka, парсит ключевые метрики, преобразует их в Prometheus-формат и делает доступными на /metrics.

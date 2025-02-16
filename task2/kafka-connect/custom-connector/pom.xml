@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!-- Версия модели POM -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Уникальный идентификатор группы артефакта -->
+  <groupId>org.example</groupId>
+
+  <!-- Идентификатор артефакта (имя проекта) -->
+  <artifactId>custom-connector</artifactId>
+
+  <!-- Версия артефакта -->
+  <version>1.0.0</version>
+
+  <!-- Формат сборки (JAR-файл) -->
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <!-- Зависимости Kafka Connect API -->
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>connect-api</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>connect-json</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <!-- Зависимости для HTTP-сервера Jetty -->
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>11.0.15</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>11.0.15</version>
+    </dependency>
+
+    <!-- Зависимость для работы с JSON через Jackson -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.2</version>
+    </dependency>
+
+    <!-- Jakarta Servlet API для работы с сервлетами -->
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
+    </dependency>
+
+    <!-- Зависимость для тестирования с JUnit 5 -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope> <!-- Используется только в тестах -->
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Плагин для компиляции исходного кода в Java 11 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>11</source> <!-- Исходный код соответствует Java 11 -->
+          <target>11</target> <!-- Скомпилированный код будет работать на Java 11 -->
+        </configuration>
+      </plugin>
+
+      <!-- Плагин для создания исполняемого JAR-файла с зависимостями -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase> <!-- Выполняется на этапе сборки пакета -->
+            <goals>
+              <goal>shade</goal> <!-- Создание "fat jar" с зависимостями -->
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

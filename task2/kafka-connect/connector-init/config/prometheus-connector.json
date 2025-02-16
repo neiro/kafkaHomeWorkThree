@@ -1,0 +1,12 @@
+{
+  "name": "prometheus-connector",
+  "config": {
+    "connector.class": "org.example.PrometheusSinkConnector",
+    "tasks.max": "1",
+    "topics": "test-topic",
+    "prometheus.listener.url": "http://localhost",
+    "prometheus.listener.port": "8090",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}
